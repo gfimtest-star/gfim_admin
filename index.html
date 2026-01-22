@@ -3,557 +3,730 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EduManager Pro - Système de Gestion</title>
-    <!-- Tailwind CSS pour le style -->
+    <title>GFIM WORLD WIDE - Bureau de Muanda</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Lucide Icons pour les icônes -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap');
-        
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-
-        @media print {
-            .no-print { display: none !important; }
-            .print-only { display: block !important; }
-            body { background: white; }
-            .print-content { 
-                position: absolute; 
-                left: 0; 
-                top: 0; 
-                width: 100%; 
-                visibility: visible !important; 
-            }
-        }
-
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
-        
         .modal-backdrop {
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(4px);
             display: none;
             position: fixed;
             inset: 0;
             z-index: 50;
             align-items: center;
             justify-content: center;
+            overflow-y: auto;
         }
         .modal-backdrop.active { display: flex; }
+        
+        .stat-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+        }
+
+        input::placeholder { color: #cbd5e1; }
+
+        @media print {
+            .no-print { display: none !important; }
+            main { padding: 0 !important; }
+        }
     </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
+<body class="bg-[#f8fafc] min-h-screen text-slate-900">
 
-    <div class="flex flex-col md:flex-row min-h-screen">
-        <!-- Sidebar Navigation -->
-        <aside class="w-full md:w-72 bg-white border-r border-gray-200 p-6 space-y-2 shrink-0 no-print">
-            <div class="flex items-center space-x-2 mb-8 px-2 text-blue-700">
-                <i data-lucide="book-open" class="w-8 h-8"></i>
-                <h1 class="text-xl font-bold tracking-tight uppercase text-blue-900">EduManager Pro</h1>
+    <div class="flex flex-col lg:flex-row min-h-screen">
+        <!-- Sidebar -->
+        <aside class="w-full lg:w-72 bg-white border-r border-slate-200 p-6 space-y-8 no-print shrink-0">
+            <div class="flex items-center space-x-3 px-2">
+                <img src="GFIM - logo.png" alt="GFIM Logo" class="w-10 h-10 object-contain" onerror="this.src='https://placehold.co/40x40?text=GFIM'">
+                <div>
+                    <h1 class="text-sm font-black tracking-tighter text-slate-800 leading-tight">GFIM WORLD WIDE</h1>
+                    <p class="text-[10px] text-blue-600 font-bold uppercase">Bureau de Muanda</p>
+                </div>
             </div>
-            <nav class="space-y-1" id="main-nav">
-                <button onclick="switchTab('dashboard')" class="nav-btn active flex items-center space-x-2 px-4 py-3 rounded-lg w-full transition-colors bg-blue-600 text-white shadow-md" data-tab="dashboard">
-                    <i data-lucide="layout-dashboard" class="w-5 h-5"></i><span>Tableau de bord</span>
+            
+            <nav class="space-y-1">
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4 px-4">Menu Principal</p>
+                <button onclick="switchTab('dashboard')" class="nav-btn active flex items-center space-x-3 px-4 py-3 rounded-xl w-full transition-all bg-blue-50 text-blue-600 font-semibold" data-tab="dashboard">
+                    <i data-lucide="layout-grid" class="w-5 h-5"></i><span>Tableau de bord</span>
                 </button>
-                <button onclick="switchTab('register')" class="nav-btn flex items-center space-x-2 px-4 py-3 rounded-lg w-full transition-colors text-gray-600 hover:bg-blue-50" data-tab="register">
-                    <i data-lucide="user-plus" class="w-5 h-5"></i><span>Inscription</span>
+                <button onclick="switchTab('register')" class="nav-btn flex items-center space-x-3 px-4 py-3 rounded-xl w-full transition-all text-slate-500 hover:bg-slate-50" data-tab="register">
+                    <i data-lucide="user-plus" class="w-5 h-5"></i><span>Inscriptions</span>
                 </button>
-                <button onclick="switchTab('participants')" class="nav-btn flex items-center space-x-2 px-4 py-3 rounded-lg w-full transition-colors text-gray-600 hover:bg-blue-50" data-tab="participants">
-                    <i data-lucide="users" class="w-5 h-5"></i><span>Participants</span>
+                <button onclick="switchTab('apprenants')" class="nav-btn flex items-center space-x-3 px-4 py-3 rounded-xl w-full transition-all text-slate-500 hover:bg-slate-50" data-tab="apprenants">
+                    <i data-lucide="users" class="w-5 h-5"></i><span>Apprenants</span>
                 </button>
-                <button onclick="switchTab('trainers')" class="nav-btn flex items-center space-x-2 px-4 py-3 rounded-lg w-full transition-colors text-gray-600 hover:bg-blue-50" data-tab="trainers">
-                    <i data-lucide="calendar" class="w-5 h-5"></i><span>Gestion Formateurs</span>
+                <button onclick="switchTab('trainers')" class="nav-btn flex items-center space-x-3 px-4 py-3 rounded-xl w-full transition-all text-slate-500 hover:bg-slate-50" data-tab="trainers">
+                    <i data-lucide="briefcase" class="w-5 h-5"></i><span>Formateurs</span>
+                </button>
+                <button onclick="switchTab('sites')" class="nav-btn flex items-center space-x-3 px-4 py-3 rounded-xl w-full transition-all text-slate-500 hover:bg-slate-50" data-tab="sites">
+                    <i data-lucide="map-pin" class="w-5 h-5"></i><span>Sites & Planning</span>
+                </button>
+                <button onclick="switchTab('finance')" class="nav-btn flex items-center space-x-3 px-4 py-3 rounded-xl w-full transition-all text-slate-500 hover:bg-slate-50" data-tab="finance">
+                    <i data-lucide="wallet" class="w-5 h-5"></i><span>Comptabilité</span>
                 </button>
             </nav>
         </aside>
 
-        <!-- Main Content Area -->
-        <main class="flex-1 p-4 md:p-8 overflow-y-auto">
+        <main class="flex-1 p-6 lg:p-10">
             
-            <!-- Dashboard Tab -->
-            <section id="tab-dashboard" class="tab-content active space-y-8 animate-in fade-in duration-500">
-                <div class="flex justify-between items-end">
+            <!-- Dashboard -->
+            <section id="tab-dashboard" class="tab-content active space-y-8">
+                <header class="flex justify-between items-end">
                     <div>
-                        <h2 class="text-3xl font-black text-gray-800">Statistiques Globales</h2>
-                        <p class="text-gray-500 text-sm">Analyse de performance en temps réel</p>
+                        <h2 class="text-3xl font-extrabold text-slate-800 tracking-tight">Tableau de Bord</h2>
+                        <p class="text-slate-500 font-medium">Aperçu en temps réel de la base de données de Muanda.</p>
                     </div>
-                    <div class="text-right hidden md:block">
-                        <p class="text-[10px] font-black text-gray-400 uppercase">Dernière mise à jour</p>
-                        <p id="last-update" class="text-xs font-bold text-blue-600"></p>
+                    <div class="bg-white px-4 py-2 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-3">
+                        <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                        <span id="live-clock" class="text-xs font-bold text-slate-600 uppercase tracking-widest">--:--:--</span>
                     </div>
-                </div>
+                </header>
 
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between">
-                        <div><p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Apprenants</p><p id="stat-total-participants" class="text-3xl font-black">0</p></div>
-                        <div class="bg-blue-50 p-3 rounded-xl text-blue-600"><i data-lucide="users" class="w-6 h-6"></i></div>
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="stat-card bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm relative overflow-hidden">
+                        <div class="absolute -right-4 -top-4 bg-blue-50 w-24 h-24 rounded-full opacity-50"></div>
+                        <div class="relative z-10">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="p-3 bg-blue-600 rounded-2xl text-white shadow-lg shadow-blue-100">
+                                    <i data-lucide="users-round" class="w-5 h-5"></i>
+                                </div>
+                                <span class="text-[10px] font-black text-blue-600 bg-blue-50 px-2 py-1 rounded-lg">TOTAL</span>
+                            </div>
+                            <p id="dash-students" class="text-4xl font-black text-slate-800">0</p>
+                            <p class="text-xs font-bold text-slate-400 uppercase mt-1">Apprenants inscrits</p>
+                        </div>
                     </div>
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between">
-                        <div><p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Recettes Total</p><p id="stat-revenue" class="text-3xl font-black text-green-600">0$</p></div>
-                        <div class="bg-green-50 p-3 rounded-xl text-green-600"><i data-lucide="trending-up" class="w-6 h-6"></i></div>
+
+                    <div class="stat-card bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm relative overflow-hidden">
+                        <div class="absolute -right-4 -top-4 bg-emerald-50 w-24 h-24 rounded-full opacity-50"></div>
+                        <div class="relative z-10">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="p-3 bg-emerald-500 rounded-2xl text-white shadow-lg shadow-emerald-100">
+                                    <i data-lucide="banknote" class="w-5 h-5"></i>
+                                </div>
+                                <span class="text-[10px] font-black text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg">RECETTES</span>
+                            </div>
+                            <p id="dash-revenue" class="text-4xl font-black text-slate-800">0$</p>
+                            <p class="text-xs font-bold text-slate-400 uppercase mt-1">Total généré</p>
+                        </div>
                     </div>
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between">
-                        <div><p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Solo (20$)</p><p id="stat-private" class="text-3xl font-black text-purple-600">0</p></div>
-                        <div class="bg-purple-50 p-3 rounded-xl text-purple-600"><i data-lucide="star" class="w-6 h-6"></i></div>
+
+                    <div class="stat-card bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm relative overflow-hidden">
+                        <div class="absolute -right-4 -top-4 bg-purple-50 w-24 h-24 rounded-full opacity-50"></div>
+                        <div class="relative z-10">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="p-3 bg-purple-500 rounded-2xl text-white shadow-lg shadow-purple-100">
+                                    <i data-lucide="graduation-cap" class="w-5 h-5"></i>
+                                </div>
+                                <span class="text-[10px] font-black text-purple-600 bg-purple-50 px-2 py-1 rounded-lg">EXPERTS</span>
+                            </div>
+                            <p id="dash-trainers-count" class="text-4xl font-black text-slate-800">0</p>
+                            <p class="text-xs font-bold text-slate-400 uppercase mt-1">Formateurs actifs</p>
+                        </div>
                     </div>
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between">
-                        <div><p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Formateurs</p><p id="stat-trainers" class="text-3xl font-black text-orange-600">0</p></div>
-                        <div class="bg-orange-50 p-3 rounded-xl text-orange-600"><i data-lucide="calendar" class="w-6 h-6"></i></div>
+
+                    <div class="stat-card bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm relative overflow-hidden">
+                        <div class="absolute -right-4 -top-4 bg-orange-50 w-24 h-24 rounded-full opacity-50"></div>
+                        <div class="relative z-10">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="p-3 bg-orange-500 rounded-2xl text-white shadow-lg shadow-orange-100">
+                                    <i data-lucide="map-pin" class="w-5 h-5"></i>
+                                </div>
+                                <span class="text-[10px] font-black text-orange-600 bg-orange-50 px-2 py-1 rounded-lg">CAPACITÉ</span>
+                            </div>
+                            <p id="dash-occupancy" class="text-4xl font-black text-slate-800">0%</p>
+                            <p class="text-xs font-bold text-slate-400 uppercase mt-1">Taux d'occupation</p>
+                        </div>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm flex flex-col justify-between">
-                        <div class="flex items-center gap-2 mb-6">
-                            <i data-lucide="pie-chart" class="w-5 h-5 text-blue-600"></i>
-                            <h3 class="text-sm font-black text-gray-700 uppercase">Démographie</h3>
-                        </div>
-                        <div class="space-y-4">
-                            <div class="relative h-4 bg-gray-100 rounded-full overflow-hidden flex" id="gender-bar">
-                                <div id="female-bar" class="bg-pink-400 h-full transition-all duration-1000" style="width: 50%"></div>
-                                <div id="male-bar" class="bg-blue-500 h-full transition-all duration-1000" style="width: 50%"></div>
+                    <!-- Répartition -->
+                    <div class="lg:col-span-1 bg-white p-8 rounded-[40px] border border-slate-100 shadow-sm space-y-6">
+                        <h3 class="font-black text-lg text-slate-800">Répartition des Cours</h3>
+                        <div class="relative flex justify-center py-4">
+                            <svg viewBox="0 0 36 36" class="w-48 h-48 transform -rotate-90">
+                                <circle cx="18" cy="18" r="16" fill="transparent" stroke="#f1f5f9" stroke-width="3"></circle>
+                                <circle id="pie-langues" cx="18" cy="18" r="16" fill="transparent" stroke="#3b82f6" stroke-width="3" stroke-dasharray="0 100"></circle>
+                                <circle id="pie-metiers" cx="18" cy="18" r="16" fill="transparent" stroke="#10b981" stroke-width="3" stroke-dasharray="0 100" stroke-dashoffset="0"></circle>
+                            </svg>
+                            <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                <p class="text-[10px] font-bold text-slate-400 uppercase">Inscrits</p>
+                                <p id="pie-total-center" class="text-2xl font-black">0</p>
                             </div>
-                            <div class="flex justify-between text-xs font-bold">
-                                <div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-pink-400"></div> Femmes <span id="female-count">0</span></div>
-                                <div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-blue-500"></div> Hommes <span id="male-count">0</span></div>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-3 h-3 rounded-full bg-blue-600"></div>
+                                    <span class="text-xs font-bold text-slate-600">Pôles Langues</span>
+                                </div>
+                                <span id="count-langues" class="text-xs font-black">0</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
+                                    <span class="text-xs font-bold text-slate-600">Pôles Métiers</span>
+                                </div>
+                                <span id="count-metiers" class="text-xs font-black">0</span>
                             </div>
                         </div>
                     </div>
-
-                    <div class="lg:col-span-2 bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
-                        <div class="flex items-center justify-between mb-6">
-                            <div class="flex items-center gap-2">
-                                <i data-lucide="bar-chart-3" class="w-5 h-5 text-blue-600"></i>
-                                <h3 class="text-sm font-black text-gray-700 uppercase">Top Formations</h3>
-                            </div>
+                    <!-- Activités -->
+                    <div class="lg:col-span-2 bg-white p-8 rounded-[40px] border border-slate-100 shadow-sm space-y-6">
+                        <div class="flex justify-between items-center">
+                            <h3 class="font-black text-lg text-slate-800">Dernières Inscriptions</h3>
+                            <button onclick="switchTab('apprenants')" class="text-[10px] font-black text-blue-600 uppercase hover:underline">Voir tout</button>
                         </div>
-                        <div id="top-courses-list" class="space-y-5">
-                            <!-- Dynamically populated -->
-                        </div>
+                        <div id="recent-activity" class="space-y-4"></div>
                     </div>
                 </div>
             </section>
 
-            <!-- Registration Tab -->
-            <section id="tab-register" class="tab-content max-w-4xl mx-auto space-y-6">
-                <div class="flex items-center justify-between">
-                    <h2 class="text-2xl font-bold text-gray-800">Fiche d'Inscription Candidat</h2>
-                    <div class="flex gap-2">
-                        <span class="bg-blue-50 px-3 py-1.5 rounded-lg text-blue-700 font-bold text-xs border border-blue-100">Groupe : 2$</span>
-                        <span class="bg-purple-50 px-3 py-1.5 rounded-lg text-purple-700 font-bold text-xs border border-purple-100">Particulier : 20$</span>
+            <!-- Section Inscription Mise à Jour -->
+            <section id="tab-register" class="tab-content max-w-5xl mx-auto space-y-8">
+                <header class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+                    <div>
+                        <h2 class="text-3xl font-extrabold text-slate-800 tracking-tight">Nouvelle Inscription</h2>
+                        <p class="text-slate-500">Remplissez le formulaire complet pour enregistrer un nouvel apprenant.</p>
                     </div>
-                </div>
+                    <div class="flex items-center gap-2 text-[10px] font-black uppercase text-slate-400">
+                        <span class="w-3 h-3 rounded-full bg-blue-600"></span> Étape 1/4
+                    </div>
+                </header>
 
-                <form id="registration-form" class="bg-white p-8 rounded-2xl shadow-xl border border-gray-100 space-y-10">
-                    <!-- Infos Perso -->
-                    <div class="space-y-6">
-                        <div class="flex items-center gap-2 pb-2 border-b">
-                            <i data-lucide="user" class="text-blue-600"></i>
-                            <h3 class="font-bold text-gray-700 uppercase tracking-wide text-sm">1. Informations Personnelles</h3>
+                <form id="reg-form" class="space-y-8">
+                    <!-- 1. Informations Personnelles -->
+                    <div class="bg-white p-8 rounded-[40px] border border-slate-100 shadow-sm space-y-6">
+                        <div class="flex items-center gap-3 border-b border-slate-50 pb-4 mb-6">
+                            <div class="bg-blue-50 text-blue-600 p-2 rounded-xl"><i data-lucide="user"></i></div>
+                            <h3 class="font-bold text-slate-800">1. Informations Personnelles</h3>
                         </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                            <div class="space-y-1">
-                                <label class="text-[10px] font-bold text-gray-400 uppercase">Nom</label>
-                                <input name="lastName" required placeholder="Nom de famille" class="w-full border p-3 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none bg-gray-50/50">
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+                            <!-- Photo Upload -->
+                            <div class="md:col-span-3 space-y-4">
+                                <div class="w-full aspect-square bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center text-slate-400 relative overflow-hidden group">
+                                    <i data-lucide="camera" class="w-8 h-8 mb-2"></i>
+                                    <span class="text-[10px] font-bold uppercase">Photo</span>
+                                    <input type="file" id="student-photo" class="absolute inset-0 opacity-0 cursor-pointer">
+                                    <img id="student-photo-preview" class="absolute inset-0 w-full h-full object-cover hidden">
+                                </div>
                             </div>
-                            <div class="space-y-1">
-                                <label class="text-[10px] font-bold text-gray-400 uppercase">Prénom</label>
-                                <input name="firstName" required placeholder="Prénom" class="w-full border p-3 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none bg-gray-50/50">
+
+                            <!-- Fields -->
+                            <div class="md:col-span-9 grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="space-y-1">
+                                    <label class="text-[10px] font-bold uppercase text-slate-400">Nom complet</label>
+                                    <input name="lastName" required placeholder="Ex: MAVUNGU" class="w-full bg-slate-50 p-3 rounded-xl outline-none focus:ring-2 focus:ring-blue-600">
+                                </div>
+                                <div class="space-y-1">
+                                    <label class="text-[10px] font-bold uppercase text-slate-400">Prénom</label>
+                                    <input name="firstName" required placeholder="Ex: Jean" class="w-full bg-slate-50 p-3 rounded-xl outline-none focus:ring-2 focus:ring-blue-600">
+                                </div>
+                                <div class="space-y-1">
+                                    <label class="text-[10px] font-bold uppercase text-slate-400">Date de naissance</label>
+                                    <input type="date" name="birthDate" required class="w-full bg-slate-50 p-3 rounded-xl outline-none focus:ring-2 focus:ring-blue-600">
+                                </div>
+                                <div class="space-y-1">
+                                    <label class="text-[10px] font-bold uppercase text-slate-400">Sexe</label>
+                                    <div class="flex gap-2">
+                                        <label class="flex-1 p-3 bg-slate-50 rounded-xl cursor-pointer has-[:checked]:bg-blue-600 has-[:checked]:text-white transition-all text-center text-xs font-bold">
+                                            <input type="radio" name="gender" value="M" checked class="hidden"> M
+                                        </label>
+                                        <label class="flex-1 p-3 bg-slate-50 rounded-xl cursor-pointer has-[:checked]:bg-blue-600 has-[:checked]:text-white transition-all text-center text-xs font-bold">
+                                            <input type="radio" name="gender" value="F" class="hidden"> F
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="space-y-1 md:col-span-2">
+                                    <label class="text-[10px] font-bold uppercase text-slate-400">Adresse de résidence</label>
+                                    <input name="address" required placeholder="Ex: Avenue de la Paix, Quartier Océan" class="w-full bg-slate-50 p-3 rounded-xl outline-none focus:ring-2 focus:ring-blue-600">
+                                </div>
+                                <div class="space-y-1">
+                                    <label class="text-[10px] font-bold uppercase text-slate-400">Téléphone</label>
+                                    <input type="tel" name="phone" required placeholder="+243 ..." class="w-full bg-slate-50 p-3 rounded-xl outline-none focus:ring-2 focus:ring-blue-600">
+                                </div>
+                                <div class="space-y-1">
+                                    <label class="text-[10px] font-bold uppercase text-slate-400">E-mail</label>
+                                    <input type="email" name="email" placeholder="nom@exemple.com" class="w-full bg-slate-50 p-3 rounded-xl outline-none focus:ring-2 focus:ring-blue-600">
+                                </div>
                             </div>
                         </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    </div>
+
+                    <!-- 2. Choix de la Formation -->
+                    <div class="bg-white p-8 rounded-[40px] border border-slate-100 shadow-sm space-y-6">
+                        <div class="flex items-center gap-3 border-b border-slate-50 pb-4 mb-6">
+                            <div class="bg-emerald-50 text-emerald-600 p-2 rounded-xl"><i data-lucide="book-open"></i></div>
+                            <h3 class="font-bold text-slate-800">2. Pôles de Formation</h3>
+                        </div>
+                        <div id="course-list" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Injected from JS -->
+                        </div>
+                    </div>
+
+                    <!-- 3. Profil et Objectifs -->
+                    <div class="bg-white p-8 rounded-[40px] border border-slate-100 shadow-sm space-y-6">
+                        <div class="flex items-center gap-3 border-b border-slate-50 pb-4 mb-6">
+                            <div class="bg-purple-50 text-purple-600 p-2 rounded-xl"><i data-lucide="target"></i></div>
+                            <h3 class="font-bold text-slate-800">3. Profil et Objectifs</h3>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div class="space-y-1">
-                                <label class="text-[10px] font-bold text-gray-400 uppercase">Date de naissance</label>
-                                <input name="birthDate" type="date" required class="w-full border p-3 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none bg-gray-50/50">
+                                <label class="text-[10px] font-bold uppercase text-slate-400">Niveau d'études actuel</label>
+                                <input name="educationLevel" placeholder="Ex: Licence en Gestion" class="w-full bg-slate-50 p-3 rounded-xl outline-none focus:ring-2 focus:ring-blue-600">
                             </div>
                             <div class="space-y-1">
-                                <label class="text-[10px] font-bold text-gray-400 uppercase">Sexe</label>
-                                <select name="gender" required class="w-full border p-3 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none bg-gray-50/50">
-                                    <option value="M">Masculin</option>
-                                    <option value="F">Féminin</option>
+                                <label class="text-[10px] font-bold uppercase text-slate-400">Statut actuel</label>
+                                <select name="status" class="w-full bg-slate-50 p-3 rounded-xl outline-none focus:ring-2 focus:ring-blue-600 text-sm">
+                                    <option value="Étudiant">Étudiant</option>
+                                    <option value="Salarié">Salarié</option>
+                                    <option value="En recherche d'emploi">En recherche d'emploi</option>
+                                    <option value="Autre">Autre</option>
                                 </select>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Choix Formation -->
-                    <div class="space-y-6 pt-4 border-t">
-                        <div class="flex items-center gap-2 pb-2 border-b">
-                            <i data-lucide="book-open" class="text-blue-600"></i>
-                            <h3 class="font-bold text-gray-700 uppercase tracking-wide text-sm">2. Formations (Max 2)</h3>
+                    <!-- 4. Disponibilités et Type de cours -->
+                    <div class="bg-white p-8 rounded-[40px] border border-slate-100 shadow-sm space-y-6">
+                        <div class="flex items-center gap-3 border-b border-slate-50 pb-4 mb-6">
+                            <div class="bg-orange-50 text-orange-600 p-2 rounded-xl"><i data-lucide="calendar"></i></div>
+                            <h3 class="font-bold text-slate-800">4. Disponibilités & Format</h3>
                         </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="courses-grid">
-                            <!-- Populated in JS -->
-                        </div>
-                    </div>
-
-                    <!-- Type de cours -->
-                    <div class="space-y-6 pt-4 border-t">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                             <div class="space-y-1">
-                                <label class="text-[10px] font-bold text-gray-400 uppercase">Formule</label>
-                                <select name="courseType" id="courseType" onchange="updatePrice()" class="w-full border p-3 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none bg-gray-50/50">
-                                    <option value="En groupe">En groupe (2$)</option>
-                                    <option value="Cours particulier">Cours particulier (20$)</option>
-                                </select>
+                            <div class="space-y-3">
+                                <label class="text-[10px] font-bold uppercase text-slate-400">Créneaux souhaités</label>
+                                <div class="flex flex-wrap gap-2">
+                                    <label class="flex items-center gap-2 bg-slate-50 px-3 py-2 rounded-xl cursor-pointer has-[:checked]:bg-orange-600 has-[:checked]:text-white transition-all text-xs font-bold">
+                                        <input type="checkbox" name="schedulePref" value="Matin" class="hidden"> Matin
+                                    </label>
+                                    <label class="flex items-center gap-2 bg-slate-50 px-3 py-2 rounded-xl cursor-pointer has-[:checked]:bg-orange-600 has-[:checked]:text-white transition-all text-xs font-bold">
+                                        <input type="checkbox" name="schedulePref" value="Après-midi" class="hidden"> Après-midi
+                                    </label>
+                                    <label class="flex items-center gap-2 bg-slate-50 px-3 py-2 rounded-xl cursor-pointer has-[:checked]:bg-orange-600 has-[:checked]:text-white transition-all text-xs font-bold">
+                                        <input type="checkbox" name="schedulePref" value="Soir" class="hidden"> Soir
+                                    </label>
+                                    <label class="flex items-center gap-2 bg-slate-50 px-3 py-2 rounded-xl cursor-pointer has-[:checked]:bg-orange-600 has-[:checked]:text-white transition-all text-xs font-bold">
+                                        <input type="checkbox" name="schedulePref" value="Week-end" class="hidden"> Week-end
+                                    </label>
+                                </div>
                             </div>
-                            <div class="space-y-1">
-                                <label class="text-[10px] font-bold text-gray-400 uppercase">Photo (Optionnel)</label>
-                                <input type="file" id="photo-input" accept="image/*" class="text-xs">
+                            <div class="space-y-3">
+                                <label class="text-[10px] font-bold uppercase text-slate-400">Type de cours</label>
+                                <div class="flex gap-2">
+                                    <label class="flex-1 p-3 bg-slate-50 rounded-xl cursor-pointer has-[:checked]:bg-blue-600 has-[:checked]:text-white transition-all">
+                                        <input type="radio" name="courseType" value="Groupe" checked onchange="calcPrice()" class="hidden">
+                                        <div class="text-center font-bold text-xs uppercase">Groupe (2$)</div>
+                                    </label>
+                                    <label class="flex-1 p-3 bg-slate-50 rounded-xl cursor-pointer has-[:checked]:bg-blue-600 has-[:checked]:text-white transition-all">
+                                        <input type="radio" name="courseType" value="Solo" onchange="calcPrice()" class="hidden">
+                                        <div class="text-center font-bold text-xs uppercase">Privé (20$)</div>
+                                    </label>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="flex items-center justify-between p-6 bg-blue-50 rounded-2xl border border-blue-100">
-                        <div class="text-3xl font-black text-blue-700" id="total-price-display">0 $</div>
-                        <button type="submit" class="bg-blue-700 text-white font-black px-8 py-4 rounded-xl shadow-xl flex items-center gap-3 uppercase tracking-wider hover:bg-blue-800 transition-all">
-                            <i data-lucide="check-circle"></i> Confirmer
+                    <!-- Action Bar -->
+                    <div class="p-6 bg-slate-900 rounded-[32px] flex flex-col md:flex-row justify-between items-center text-white gap-6">
+                        <div class="flex items-center gap-6">
+                            <div class="text-center md:text-left">
+                                <p class="text-[10px] font-bold text-slate-400 uppercase">Total Frais Inscription</p>
+                                <p id="reg-price" class="text-3xl font-black">0$</p>
+                            </div>
+                            <div class="h-10 w-px bg-slate-700 hidden md:block"></div>
+                            <div class="text-center md:text-left">
+                                <p class="text-[10px] font-bold text-slate-400 uppercase">Estimation en Francs</p>
+                                <p id="reg-price-fc" class="text-xl font-bold text-slate-300">0 FC</p>
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full md:w-auto bg-blue-600 px-12 py-5 rounded-2xl font-bold hover:bg-blue-500 hover:scale-105 active:scale-95 transition-all shadow-xl shadow-blue-900/20">
+                            Finaliser l'Inscription
                         </button>
                     </div>
                 </form>
             </section>
 
-            <!-- Participants Tab -->
-            <section id="tab-participants" class="tab-content space-y-6">
+            <!-- Liste Apprenants -->
+            <section id="tab-apprenants" class="tab-content space-y-6">
                 <div class="flex justify-between items-center">
-                    <h2 class="text-2xl font-bold text-gray-800">Registre des Apprenants</h2>
-                    <div class="bg-white border px-4 py-2 rounded-lg flex items-center gap-2 shadow-sm">
-                        <i data-lucide="search" class="w-4 h-4 text-gray-400"></i>
-                        <input id="search-participants" placeholder="Filtrer..." class="text-sm outline-none">
-                    </div>
+                    <h2 class="text-2xl font-bold">Répertoire des Apprenants</h2>
+                    <button onclick="window.print()" class="text-xs font-bold bg-white border border-slate-200 px-4 py-2 rounded-xl flex items-center gap-2">
+                        <i data-lucide="download" class="w-4 h-4"></i> Exporter
+                    </button>
                 </div>
-                
-                <div class="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm overflow-x-auto">
-                    <table class="w-full text-left min-w-[850px]">
-                        <thead class="bg-gray-50 text-[10px] font-black uppercase tracking-widest text-gray-400 border-b">
+                <div class="bg-white rounded-[32px] overflow-hidden border border-slate-100 shadow-sm overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead class="bg-slate-50 border-b">
                             <tr>
-                                <th class="p-5">Apprenant</th>
-                                <th class="p-5">Contacts & Formule</th>
-                                <th class="p-5">Cours choisis</th>
-                                <th class="p-5">Paiement</th>
-                                <th class="p-5 text-center">Actions</th>
+                                <th class="p-5 text-[10px] font-bold uppercase text-slate-400">Photo</th>
+                                <th class="p-5 text-[10px] font-bold uppercase text-slate-400">Nom & Prénom</th>
+                                <th class="p-5 text-[10px] font-bold uppercase text-slate-400">Formation</th>
+                                <th class="p-5 text-[10px] font-bold uppercase text-slate-400">Sexe</th>
+                                <th class="p-5 text-[10px] font-bold uppercase text-slate-400">Téléphone</th>
+                                <th class="p-5 text-[10px] font-bold uppercase text-slate-400">Action</th>
                             </tr>
                         </thead>
-                        <tbody id="participants-tbody" class="divide-y divide-gray-50">
-                            <!-- Dynamically populated -->
-                        </tbody>
+                        <tbody id="apprenants-tbody"></tbody>
                     </table>
                 </div>
             </section>
 
-            <!-- Trainers Tab -->
-            <section id="tab-trainers" class="tab-content space-y-6">
+            <!-- Autres sections (Formateurs, Sites, Finance) inchangées mais gardées fonctionnelles -->
+            <section id="tab-trainers" class="tab-content space-y-8">
                 <div class="flex justify-between items-center">
-                    <h2 class="text-2xl font-bold text-gray-800">Gestion des Formateurs</h2>
-                    <button onclick="toggleModal('trainer-modal', true)" class="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 font-bold text-sm shadow-md hover:bg-blue-700">
-                        <i data-lucide="plus" class="w-4 h-4"></i> Nouveau Formateur
+                    <h2 class="text-2xl font-bold text-slate-800">Gestion des Formateurs</h2>
+                    <button onclick="openTrainerModal()" class="bg-blue-600 text-white px-6 py-3 rounded-2xl flex items-center gap-2 font-bold shadow-lg">
+                        <i data-lucide="plus" class="w-5 h-5"></i> Nouveau Formateur
                     </button>
                 </div>
-                <div id="trainers-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Dynamically populated -->
+                <div id="trainers-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+            </section>
+
+            <section id="tab-sites" class="tab-content space-y-8">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-2xl font-bold text-slate-800">Sites & Planning</h2>
+                    <button onclick="toggleModal('site-modal', true)" class="bg-blue-600 text-white px-6 py-3 rounded-2xl flex items-center gap-2 font-bold">
+                        <i data-lucide="plus" class="w-5 h-5"></i> Nouveau Site
+                    </button>
+                </div>
+                <div id="sites-list" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
+            </section>
+
+            <section id="tab-finance" class="tab-content space-y-8 text-center py-20">
+                <div class="max-w-md mx-auto space-y-4">
+                    <div class="w-20 h-20 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto">
+                        <i data-lucide="wallet" class="w-10 h-10"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold">Module Comptabilité</h2>
+                    <p class="text-slate-500">Le suivi détaillé des paiements mensuels est en cours de déploiement.</p>
                 </div>
             </section>
 
         </main>
     </div>
 
-    <!-- Modal: Impression / Détails -->
-    <div id="print-modal" class="modal-backdrop no-print">
-        <div class="bg-white rounded-2xl max-w-2xl w-full mx-4 overflow-hidden shadow-2xl">
-            <div class="flex items-center justify-between p-4 bg-gray-50 border-b">
-                <h3 class="font-bold text-gray-700 flex items-center gap-2 uppercase tracking-tighter"><i data-lucide="file-text" class="w-4 h-4"></i> Fiche Apprenant</h3>
-                <div class="flex gap-2">
-                    <button onclick="window.print()" class="bg-blue-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-2"><i data-lucide="printer" class="w-4 h-4"></i> Imprimer</button>
-                    <button onclick="toggleModal('print-modal', false)" class="p-1.5 hover:bg-gray-200 rounded-lg text-gray-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+    <!-- Modals (Trainer & Site) -->
+    <div id="trainer-modal" class="modal-backdrop">
+        <div class="bg-white rounded-[40px] p-8 max-w-4xl w-full mx-4 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <button onclick="toggleModal('trainer-modal', false)" class="absolute top-6 right-6 text-slate-300 hover:text-slate-600"><i data-lucide="x"></i></button>
+            <form id="trainer-form" class="space-y-8">
+                <input type="hidden" id="edit-trainer-id">
+                <h3 class="text-xl font-bold">Fiche Formateur</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="space-y-4 text-center">
+                        <div class="relative group mx-auto w-40 h-40">
+                            <div id="trainer-photo-preview-div" class="w-40 h-40 bg-slate-100 rounded-3xl flex items-center justify-center border-2 border-dashed border-slate-200 overflow-hidden">
+                                <i data-lucide="camera" class="w-8 h-8 text-slate-300"></i>
+                            </div>
+                            <input type="file" id="trainer-photo-input" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer">
+                        </div>
+                        <input name="name" placeholder="Nom Complet" required class="w-full bg-slate-50 p-3 rounded-xl outline-none">
+                    </div>
+                    <div class="md:col-span-2 grid grid-cols-2 gap-4">
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-bold uppercase text-slate-400">Spécialité</label>
+                            <select name="subject" id="trainer-subject-select" class="w-full bg-slate-50 p-3 rounded-xl outline-none"></select>
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-bold uppercase text-slate-400">Expérience</label>
+                            <input name="experience" required class="w-full bg-slate-50 p-3 rounded-xl outline-none" placeholder="Ex: 5 ans">
+                        </div>
+                        <div class="col-span-2 space-y-1">
+                            <label class="text-[10px] font-bold uppercase text-slate-400">Affectation Sites</label>
+                            <div id="trainer-sites-checkboxes" class="flex flex-wrap gap-2 pt-1"></div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div id="print-area" class="p-8 space-y-8 bg-white text-gray-900 print-content">
-                <!-- Injected via JS -->
-            </div>
+                <button type="submit" class="w-full bg-blue-600 text-white p-4 rounded-2xl font-bold">Enregistrer le formateur</button>
+            </form>
         </div>
     </div>
 
-    <!-- Modal: Nouveau Formateur -->
-    <div id="trainer-modal" class="modal-backdrop no-print">
-        <div class="bg-white rounded-3xl p-8 max-w-md w-full mx-4 shadow-2xl">
-            <div class="flex items-center gap-2 mb-6 text-blue-700 border-b pb-4">
-                <i data-lucide="user-plus" class="w-6 h-6"></i>
-                <h3 class="text-xl font-black uppercase tracking-tight">Recrutement</h3>
-            </div>
-            <form id="trainer-form" class="space-y-4">
-                <input name="name" required placeholder="Nom Complet" class="w-full border p-3.5 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-600">
-                <input name="domain" required placeholder="Domaine (ex: Anglais)" class="w-full border p-3.5 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-600">
-                <input name="availability" required placeholder="Disponibilités" class="w-full border p-3.5 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-600">
-                <div class="flex gap-3 pt-6">
-                    <button type="button" onclick="toggleModal('trainer-modal', false)" class="flex-1 px-4 py-3.5 border rounded-xl font-bold text-xs uppercase hover:bg-gray-50">Annuler</button>
-                    <button type="submit" class="flex-1 px-4 py-3.5 bg-blue-600 text-white rounded-xl font-bold text-xs uppercase shadow-lg hover:bg-blue-700">Enregistrer</button>
+    <div id="site-modal" class="modal-backdrop">
+        <div class="bg-white rounded-[40px] p-8 max-w-lg w-full mx-4 shadow-2xl relative">
+            <button onclick="toggleModal('site-modal', false)" class="absolute top-6 right-6 text-slate-300 hover:text-slate-600"><i data-lucide="x"></i></button>
+            <form id="site-form" class="space-y-6">
+                <h3 class="text-xl font-bold">Ajouter un nouveau site</h3>
+                <div class="space-y-4">
+                    <input name="siteName" required placeholder="Nom du site" class="w-full bg-slate-50 p-3 rounded-xl outline-none">
+                    <input name="location" required placeholder="Localisation" class="w-full bg-slate-50 p-3 rounded-xl outline-none">
+                    <input type="number" name="capacity" required placeholder="Capacité" class="w-full bg-slate-50 p-3 rounded-xl outline-none">
+                    <select name="theme" class="w-full bg-slate-50 p-3 rounded-xl outline-none">
+                        <option value="blue">Bleu</option><option value="emerald">Emeraude</option><option value="red">Rouge</option>
+                    </select>
+                    <input name="schedule" required placeholder="Ex: Lun - Sam : 08h - 17h" class="w-full bg-slate-50 p-3 rounded-xl outline-none">
                 </div>
+                <button type="submit" class="w-full bg-blue-600 text-white p-4 rounded-2xl font-bold">Enregistrer le site</button>
             </form>
         </div>
     </div>
 
     <script>
-        // --- DATA & CONFIG ---
-        const courseCatalog = [
-            { cat: 'Langues', items: ['Anglais Business', 'Français FLE', 'Espagnol', 'Alphabétisation'] },
-            { cat: 'Métiers', items: ['Coiffure', 'Esthétique', 'Maquillage'] }
-        ];
-
-        let state = {
-            participants: JSON.parse(localStorage.getItem('edu_participants')) || [],
-            trainers: JSON.parse(localStorage.getItem('edu_trainers')) || [
-                { id: 1, name: 'Jean Dupont', domain: 'Anglais Business', availability: 'Lundi, Mardi', status: 'Actif' }
+        const POLES = {
+            "Pôle Langues & Communication": [
+                { name: "Français (FLE/Soutien)", icon: "languages" },
+                { name: "Anglais (Général/Business)", icon: "earth" },
+                { name: "Espagnol", icon: "message-square" },
+                { name: "Alphabétisation", icon: "book-type" }
             ],
-            currentPhoto: null
+            "Pôle Métiers": [
+                { name: "Coiffure (Coupe, Brushing, Coloration)", icon: "scissors" },
+                { name: "Esthétique (Soins, Maquillage, Onglerie)", icon: "palette" }
+            ]
         };
 
-        // --- CORE FUNCTIONS ---
+        const EXCHANGE_RATE = 2000; // Taux indicatif 1$ = 2000 FC
+
+        let state = {
+            students: JSON.parse(localStorage.getItem('gfim_students')) || [],
+            trainers: JSON.parse(localStorage.getItem('gfim_trainers')) || [],
+            sites: JSON.parse(localStorage.getItem('gfim_sites')) || [
+                { id: 1, name: 'Site Central', location: 'Avenue du Port, Muanda', capacity: 50, schedule: 'Lun - Sam : 08h - 18h', theme: 'blue' }
+            ]
+        };
+
+        let trainerPhotoData = null;
+
         function save() {
-            localStorage.setItem('edu_participants', JSON.stringify(state.participants));
-            localStorage.setItem('edu_trainers', JSON.stringify(state.trainers));
-            renderDashboard();
-            renderParticipants();
-            renderTrainers();
+            localStorage.setItem('gfim_students', JSON.stringify(state.students));
+            localStorage.setItem('gfim_trainers', JSON.stringify(state.trainers));
+            localStorage.setItem('gfim_sites', JSON.stringify(state.sites));
+            refreshUI();
         }
 
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.getElementById('tab-' + tabId).classList.add('active');
-            
+        function switchTab(id) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.getElementById('tab-' + id).classList.add('active');
             document.querySelectorAll('.nav-btn').forEach(b => {
-                b.classList.remove('bg-blue-600', 'text-white', 'shadow-md');
-                b.classList.add('text-gray-600');
-                if(b.dataset.tab === tabId) {
-                    b.classList.add('bg-blue-600', 'text-white', 'shadow-md');
-                    b.classList.remove('text-gray-600');
-                }
+                b.classList.remove('bg-blue-50', 'text-blue-600', 'font-semibold');
+                if(b.dataset.tab === id) b.classList.add('bg-blue-50', 'text-blue-600', 'font-semibold');
             });
+            lucide.createIcons();
         }
 
-        function toggleModal(id, show) {
-            document.getElementById(id).classList.toggle('active', show);
+        function updateClock() {
+            document.getElementById('live-clock').innerText = new Date().toLocaleTimeString('fr-FR');
+        }
+        setInterval(updateClock, 1000);
+
+        function calcPrice() {
+            const type = document.querySelector('input[name="courseType"]:checked').value;
+            const count = document.querySelectorAll('input[name="subject"]:checked').length;
+            const total = count * (type === 'Solo' ? 20 : 2);
+            document.getElementById('reg-price').innerText = total + '$';
+            document.getElementById('reg-price-fc').innerText = (total * EXCHANGE_RATE).toLocaleString('fr-FR') + ' FC';
         }
 
-        // --- RENDERERS ---
-        function renderDashboard() {
-            const rev = state.participants.reduce((a, c) => a + c.price, 0);
-            const females = state.participants.filter(p => p.gender === 'F').length;
-            const males = state.participants.filter(p => p.gender === 'M').length;
-            const solo = state.participants.filter(p => p.type === 'Cours particulier').length;
-
-            document.getElementById('stat-total-participants').innerText = state.participants.length;
-            document.getElementById('stat-revenue').innerText = rev + '$';
-            document.getElementById('stat-private').innerText = solo;
-            document.getElementById('stat-trainers').innerText = state.trainers.length;
-            document.getElementById('last-update').innerText = new Date().toLocaleTimeString();
-
-            // Démographie
-            const total = state.participants.length || 1;
-            document.getElementById('female-bar').style.width = (females / total * 100) + '%';
-            document.getElementById('male-bar').style.width = (males / total * 100) + '%';
-            document.getElementById('female-count').innerText = females;
-            document.getElementById('male-count').innerText = males;
-
-            // Popularité
-            const counts = {};
-            state.participants.forEach(p => p.courses.forEach(c => counts[c] = (counts[c] || 0) + 1));
-            const sorted = Object.entries(counts).sort((a,b) => b[1] - a[1]).slice(0,3);
+        function refreshUI() {
+            // Stats
+            document.getElementById('dash-students').innerText = state.students.length;
+            document.getElementById('dash-revenue').innerText = state.students.reduce((a, s) => a + (s.paid || 0), 0) + "$";
+            document.getElementById('dash-trainers-count').innerText = state.trainers.length;
             
-            document.getElementById('top-courses-list').innerHTML = sorted.map(([name, count]) => `
-                <div class="space-y-1">
-                    <div class="flex justify-between text-xs font-bold uppercase">
-                        <span>${name}</span>
-                        <span>${count} inscrits</span>
+            const cap = state.sites.reduce((a, s) => a + parseInt(s.capacity || 0), 0);
+            document.getElementById('dash-occupancy').innerText = cap > 0 ? Math.round((state.students.length / cap) * 100) + "%" : "0%";
+
+            // Pie Chart
+            let l = 0, m = 0;
+            state.students.forEach(s => s.subjects.forEach(sub => {
+                if (POLES["Pôle Langues & Communication"].some(x => x.name === sub)) l++;
+                else m++;
+            }));
+            const total = l + m || 1;
+            document.getElementById('pie-total-center').innerText = state.students.length;
+            document.getElementById('count-langues').innerText = l;
+            document.getElementById('count-metiers').innerText = m;
+            document.getElementById('pie-langues').style.strokeDasharray = `${(l/total)*100} 100`;
+            document.getElementById('pie-metiers').style.strokeDasharray = `${(m/total)*100} 100`;
+            document.getElementById('pie-metiers').style.strokeDashoffset = `-${(l/total)*100}`;
+
+            // Recent Inscriptions
+            document.getElementById('recent-activity').innerHTML = state.students.slice(-4).reverse().map(s => `
+                <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center font-bold text-blue-600 shadow-sm overflow-hidden">
+                            ${s.photo ? `<img src="${s.photo}" class="w-full h-full object-cover">` : s.lastName[0]}
+                        </div>
+                        <div>
+                            <p class="text-xs font-black uppercase text-slate-800">${s.lastName} ${s.firstName}</p>
+                            <p class="text-[10px] text-slate-400 font-bold uppercase">${s.subjects[0]}</p>
+                        </div>
                     </div>
-                    <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
-                        <div class="bg-blue-600 h-full" style="width: ${(count/total*100)}%"></div>
-                    </div>
+                    <p class="text-xs font-black text-emerald-600">+${s.paid}$</p>
                 </div>
-            `).join('') || '<p class="text-center py-10 text-gray-400">Aucune donnée</p>';
-        }
+            `).join('');
 
-        function renderParticipants() {
-            const query = document.getElementById('search-participants').value.toLowerCase();
-            const filtered = state.participants.filter(p => 
-                p.lastName.toLowerCase().includes(query) || p.firstName.toLowerCase().includes(query)
-            );
-
-            document.getElementById('participants-tbody').innerHTML = filtered.map(p => `
-                <tr class="hover:bg-blue-50/30 transition-colors">
-                    <td class="p-5">
-                        <div class="flex items-center gap-4">
-                            <div class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center text-blue-700 font-bold overflow-hidden">
-                                ${p.photo ? `<img src="${p.photo}" class="w-full h-full object-cover">` : p.firstName[0]}
-                            </div>
-                            <div>
-                                <div class="font-bold text-gray-900 text-sm uppercase">${p.lastName} ${p.firstName}</div>
-                                <div class="text-[10px] text-gray-400">ID: #${p.id}</div>
-                            </div>
+            // Table
+            document.getElementById('apprenants-tbody').innerHTML = state.students.map(s => `
+                <tr class="border-b border-slate-50 hover:bg-slate-50 transition-colors text-sm">
+                    <td class="p-4">
+                        <div class="w-10 h-10 rounded-full bg-slate-100 overflow-hidden flex items-center justify-center">
+                            ${s.photo ? `<img src="${s.photo}" class="w-full h-full object-cover">` : `<i data-lucide="user" class="w-4 h-4 text-slate-300"></i>`}
                         </div>
                     </td>
-                    <td class="p-5">
-                        <div class="text-xs text-gray-600">${p.phone}</div>
-                        <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded ${p.type === 'Cours particulier' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}">${p.type}</span>
-                    </td>
-                    <td class="p-5">
-                        <div class="flex flex-wrap gap-1">
-                            ${p.courses.map(c => `<span class="px-2 py-0.5 bg-blue-600 text-white text-[9px] font-bold rounded">${c}</span>`).join('')}
-                        </div>
-                    </td>
-                    <td class="p-5 text-sm font-black text-green-600">${p.price}$</td>
-                    <td class="p-5">
-                        <div class="flex justify-center gap-2">
-                            <button onclick="printParticipant(${p.id})" class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"><i data-lucide="printer" class="w-4 h-4"></i></button>
-                            <button onclick="deleteParticipant(${p.id})" class="p-2 text-red-400 hover:bg-red-50 rounded-lg"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                        </div>
-                    </td>
+                    <td class="p-4"><p class="font-black uppercase">${s.lastName} ${s.firstName}</p></td>
+                    <td class="p-4 text-xs font-bold text-blue-600">${s.subjects.join(', ')}</td>
+                    <td class="p-4"><span class="text-[10px] font-black uppercase">${s.gender}</span></td>
+                    <td class="p-4 font-mono text-xs">${s.phone}</td>
+                    <td class="p-4 text-right"><button class="text-slate-300 hover:text-blue-600"><i data-lucide="more-horizontal"></i></button></td>
                 </tr>
             `).join('');
-            lucide.createIcons();
-        }
 
-        function renderTrainers() {
-            document.getElementById('trainers-grid').innerHTML = state.trainers.map(t => `
-                <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-6">
-                    <div class="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center text-white text-xl font-black">${t.name[0]}</div>
-                    <div class="flex-1">
-                        <h4 class="font-bold">${t.name}</h4>
-                        <p class="text-xs text-blue-600 font-bold uppercase">${t.domain}</p>
-                        <div class="text-[10px] text-gray-400 mt-2 italic">Dispo: ${t.availability}</div>
+            // Sites
+            document.getElementById('sites-list').innerHTML = state.sites.map(s => `
+                <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
+                    <h3 class="font-black text-slate-800 mb-1">${s.name}</h3>
+                    <p class="text-[10px] text-slate-400 font-bold uppercase mb-4">${s.location}</p>
+                    <div class="bg-slate-50 p-3 rounded-2xl flex justify-between items-center">
+                        <span class="text-[10px] font-black uppercase text-slate-500">Capacité</span>
+                        <span class="text-xs font-bold">${s.capacity}</span>
                     </div>
-                    <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase bg-green-100 text-green-700">${t.status}</span>
                 </div>
             `).join('');
+
+            // Trainers
+            document.getElementById('trainers-list').innerHTML = state.trainers.map(t => `
+                <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex items-center gap-4">
+                    <div class="w-14 h-14 bg-slate-50 rounded-2xl overflow-hidden flex items-center justify-center">
+                        ${t.photo ? `<img src="${t.photo}" class="w-full h-full object-cover">` : `<i data-lucide="user" class="text-slate-200"></i>`}
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-sm uppercase">${t.name}</h4>
+                        <p class="text-[10px] font-black text-blue-600 uppercase italic">${t.subject}</p>
+                    </div>
+                </div>
+            `).join('');
+
             lucide.createIcons();
         }
 
-        // --- ACTIONS ---
-        function updatePrice() {
-            const type = document.getElementById('courseType').value;
-            const count = document.querySelectorAll('input[name="course"]:checked').length;
-            const unit = type === 'Cours particulier' ? 20 : 2;
-            document.getElementById('total-price-display').innerText = (count * unit) + ' $';
+        // Modals
+        function toggleModal(id, show) { document.getElementById(id).classList.toggle('active', show); }
+        function openTrainerModal() { 
+            toggleModal('trainer-modal', true);
+            document.getElementById('trainer-sites-checkboxes').innerHTML = state.sites.map(s => `
+                <label class="text-[10px] bg-slate-50 px-2 py-1 rounded cursor-pointer has-[:checked]:bg-blue-600 has-[:checked]:text-white">
+                    <input type="checkbox" name="sites" value="${s.name}" class="hidden"> ${s.name}
+                </label>
+            `).join('');
         }
 
-        function deleteParticipant(id) {
-            state.participants = state.participants.filter(p => p.id !== id);
-            save();
-        }
-
-        function printParticipant(id) {
-            const p = state.participants.find(x => x.id === id);
-            if(!p) return;
-
-            document.getElementById('print-area').innerHTML = `
-                <div class="flex justify-between items-start border-b-2 border-blue-600 pb-6">
-                    <div class="space-y-1">
-                        <h1 class="text-3xl font-black text-blue-800 uppercase">EduManager Pro</h1>
-                        <p class="text-xs font-bold text-gray-500 uppercase tracking-widest">Formation Continue</p>
-                        <p class="text-[10px] text-gray-400 mt-2 italic">Dossier: #${p.id}</p>
-                    </div>
-                    <div class="w-28 h-32 border-2 border-blue-100 rounded-xl bg-gray-50 flex items-center justify-center overflow-hidden">
-                        ${p.photo ? `<img src="${p.photo}" class="w-full h-full object-cover">` : '<i data-lucide="camera" class="w-8 h-8 text-gray-300"></i>'}
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 gap-10">
-                    <div class="space-y-6">
-                        <h4 class="text-[10px] font-black text-blue-600 uppercase border-b pb-1">Identité</h4>
-                        <div class="text-xs space-y-2">
-                            <p><strong>Nom:</strong> ${p.lastName.toUpperCase()}</p>
-                            <p><strong>Prénom:</strong> ${p.firstName}</p>
-                            <p><strong>Contact:</strong> ${p.phone}</p>
-                        </div>
-                    </div>
-                    <div class="space-y-6">
-                        <h4 class="text-[10px] font-black text-blue-600 uppercase border-b pb-1">Formation</h4>
-                        <div class="space-y-2">
-                            ${p.courses.map(c => `<div class="text-xs font-bold p-2 bg-gray-50 border-l-4 border-blue-600">${c}</div>`).join('')}
-                            <p class="text-[10px] font-bold text-blue-700 uppercase mt-4">Paiement : ${p.price}$ (${p.type})</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="mt-20 flex justify-between px-10">
-                    <div class="text-center text-[10px] font-bold text-gray-400 uppercase">Signature Candidat</div>
-                    <div class="text-center text-[10px] font-bold text-gray-400 uppercase">Cachet Centre</div>
-                </div>
-            `;
-            lucide.createIcons();
-            toggleModal('print-modal', true);
-        }
-
-        // --- EVENT LISTENERS ---
-        document.getElementById('photo-input').addEventListener('change', (e) => {
+        // Photo Preview Handling
+        document.getElementById('student-photo').onchange = (e) => {
             const reader = new FileReader();
-            reader.onload = () => state.currentPhoto = reader.result;
+            reader.onload = (ev) => { 
+                const img = document.getElementById('student-photo-preview');
+                img.src = ev.target.result;
+                img.classList.remove('hidden');
+            };
             reader.readAsDataURL(e.target.files[0]);
-        });
+        };
 
-        document.getElementById('registration-form').addEventListener('submit', (e) => {
+        // Form Submission
+        document.getElementById('reg-form').onsubmit = (e) => {
             e.preventDefault();
-            const formData = new FormData(e.target);
-            const courses = Array.from(document.querySelectorAll('input[name="course"]:checked')).map(i => i.value);
+            const fd = new FormData(e.target);
+            const subjs = Array.from(document.querySelectorAll('input[name="subject"]:checked')).map(i => i.value);
+            if(subjs.length === 0) return alert("Veuillez choisir au moins une formation.");
             
-            if(courses.length === 0) return alert('Sélectionnez au moins une formation');
-
-            const type = formData.get('courseType');
-            const price = courses.length * (type === 'Cours particulier' ? 20 : 2);
-
-            state.participants.push({
+            const type = fd.get('courseType');
+            const student = {
                 id: Date.now(),
-                firstName: formData.get('firstName'),
-                lastName: formData.get('lastName'),
-                gender: formData.get('gender'),
-                phone: formData.get('phone') || 'Non renseigné',
-                email: formData.get('email') || 'N/A',
-                courses: courses,
+                lastName: fd.get('lastName'),
+                firstName: fd.get('firstName'),
+                birthDate: fd.get('birthDate'),
+                gender: fd.get('gender'),
+                address: fd.get('address'),
+                phone: fd.get('phone'),
+                email: fd.get('email'),
+                subjects: subjs,
+                education: fd.get('educationLevel'),
+                status: fd.get('status'),
+                schedules: Array.from(fd.getAll('schedulePref')),
                 type: type,
-                price: price,
-                photo: state.currentPhoto,
-                date: new Date().toLocaleDateString()
-            });
-
+                paid: subjs.length * (type === 'Solo' ? 20 : 2),
+                photo: document.getElementById('student-photo-preview').classList.contains('hidden') ? null : document.getElementById('student-photo-preview').src
+            };
+            
+            state.students.push(student);
             e.target.reset();
-            state.currentPhoto = null;
-            updatePrice();
+            document.getElementById('student-photo-preview').classList.add('hidden');
             save();
-            switchTab('participants');
-        });
+            switchTab('apprenants');
+        };
 
-        document.getElementById('trainer-form').addEventListener('submit', (e) => {
+        document.getElementById('trainer-photo-input').onchange = (e) => {
+            const reader = new FileReader();
+            reader.onload = (ev) => { 
+                trainerPhotoData = ev.target.result; 
+                document.getElementById('trainer-photo-preview-div').innerHTML = `<img src="${trainerPhotoData}" class="w-full h-full object-cover">`; 
+            };
+            reader.readAsDataURL(e.target.files[0]);
+        };
+
+        document.getElementById('trainer-form').onsubmit = (e) => {
             e.preventDefault();
-            const formData = new FormData(e.target);
+            const fd = new FormData(e.target);
             state.trainers.push({
                 id: Date.now(),
-                name: formData.get('name'),
-                domain: formData.get('domain'),
-                availability: formData.get('availability'),
-                status: 'Actif'
+                name: fd.get('name'),
+                subject: fd.get('subject'),
+                experience: fd.get('experience'),
+                sites: Array.from(fd.getAll('sites')),
+                photo: trainerPhotoData
             });
             e.target.reset();
-            save();
             toggleModal('trainer-modal', false);
-        });
+            save();
+        };
 
-        document.getElementById('search-participants').addEventListener('input', renderParticipants);
+        document.getElementById('site-form').onsubmit = (e) => {
+            e.preventDefault();
+            const fd = new FormData(e.target);
+            state.sites.push({
+                id: Date.now(),
+                name: fd.get('siteName'),
+                location: fd.get('location'),
+                capacity: fd.get('capacity'),
+                theme: fd.get('theme'),
+                schedule: fd.get('schedule')
+            });
+            e.target.reset();
+            toggleModal('site-modal', false);
+            save();
+        };
 
-        // --- INIT ---
         window.onload = () => {
-            // Remplir le catalogue de cours
-            document.getElementById('courses-grid').innerHTML = courseCatalog.map(cat => `
-                <div class="space-y-2">
-                    <h4 class="text-[10px] font-black text-blue-800 uppercase bg-blue-50 p-2 rounded border-l-2 border-blue-600">${cat.cat}</h4>
-                    ${cat.items.map(item => `
-                        <label class="flex items-center gap-3 p-3 rounded-xl border border-gray-100 hover:bg-gray-50 cursor-pointer text-xs">
-                            <input type="checkbox" name="course" value="${item}" onchange="updatePrice()">
-                            <span>${item}</span>
-                        </label>
-                    `).join('')}
+            const list = document.getElementById('course-list');
+            list.innerHTML = Object.entries(POLES).map(([p, items]) => `
+                <div class="p-6 bg-slate-50/50 rounded-3xl border border-slate-100">
+                    <p class="font-black text-blue-600 uppercase text-[10px] mb-4">${p}</p>
+                    <div class="space-y-3">
+                        ${items.map(i => `
+                            <label class="flex items-center gap-3 p-3 bg-white rounded-2xl border border-slate-100 cursor-pointer hover:border-blue-200 transition-all has-[:checked]:ring-2 has-[:checked]:ring-blue-600">
+                                <input type="checkbox" name="subject" value="${i.name}" onchange="calcPrice()" class="w-4 h-4 rounded text-blue-600">
+                                <span class="text-xs font-bold text-slate-700">${i.name}</span>
+                            </label>
+                        `).join('')}
+                    </div>
                 </div>
             `).join('');
-
-            lucide.createIcons();
-            save();
+            document.getElementById('trainer-subject-select').innerHTML = Object.values(POLES).flat().map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+            refreshUI();
+            updateClock();
         };
     </script>
 </body>
