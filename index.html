@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduManager Pro - Gestion de Centre</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap');
+        
+        body { font-family: 'Inter', sans-serif; }
+
+        @media print {
+            body * { visibility: hidden; }
+            #print-area, #print-area * { visibility: visible; }
+            #print-area { position: absolute; left: 0; top: 0; width: 100%; display: block !important; }
+            .no-print { display: none !important; }
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900 min-h-screen">
+
+    <div class="flex flex-col md:flex-row min-h-screen">
+        <!-- Sidebar -->
+        <aside class="w-full md:w-72 bg-white border-r border-gray-200 p-6 space-y-2 shrink-0 no-print">
+            <div class="flex items-center space-x-2 mb-8 px-2 text-blue-700">
+                <i data-lucide="book-open" class="w-8 h-8"></i>
+                <h1 class="text-xl font-bold tracking-tight uppercase text-blue-900">EduManager Pro</h1>
+            </div>
+            <nav class="space-y-1">
+                <button onclick="switchTab('dashboard')" id="btn-dashboard" class="nav-btn flex items-center space-x-2 px-4 py-3 rounded-lg w-full transition-colors bg-blue-600 text-white shadow-md">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5"></i><span>Tableau de bord</span>
+                </button>
+                <button onclick="switchTab('register')" id="btn-register" class="nav-btn flex items-center space-x-2 px-4 py-3 rounded-lg w-full transition-colors text-gray-600 hover:bg-blue-50">
+                    <i data-lucide="user-plus" class="w-5 h-5"></i><span>Inscription</span>
+                </button>
+                <button onclick="switchTab('participants')" id="btn-participants" class="nav-btn flex items-center space-x-2 px-4 py-3 rounded-lg w-full transition-colors text-gray-600 hover:bg-blue-50">
+                    <i data-lucide="users" class="w-5 h-5"></i><span>Participants</span>
+                </button>
+                <button onclick="switchTab('trainers')" id="btn-trainers" class="nav-btn flex items-center space-x-2 px-4 py-3 rounded-lg w-full transition-colors text-gray-600 hover:bg-blue-50">
+                    <i data-lucide="calendar" class="w-5 h-5"></i><span>Formateurs</span>
+                </button>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-4 md:p-8 overflow-y-auto">
+            
+            <!-- Tab: Dashboard -->
+            <div id="tab-dashboard" class="tab-content active animate-fade-in space-y-8">
+                <div class="flex justify-between items-end">
+                    <div>
+                        <h2 class="text-3xl font-black text-gray-800">Statistiques Globales</h2>
+                        <p class="text-gray-500 text-sm">Analyse de performance en temps réel</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between">
+                        <div><p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Apprenants</p><p id="stat-total-participants" class="text-3xl font-black">0</p></div>
+                        <div class="bg-blue-50 p-3 rounded-xl text-blue-600"><i data-lucide="users"></i></div>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between">
+                        <div><p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Recettes</p><p id="stat-total-revenue" class="text-3xl font-black text-green-600">0$</p></div>
+                        <div class="bg-green-50 p-3 rounded-xl text-green-600"><i data-lucide="trending-up"></i></div>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between">
+                        <div><p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Solo</p><p id="stat-private-count" class="text-3xl font-black text-purple-600">0</p></div>
+                        <div class="bg-purple-50 p-3 rounded-xl text-purple-600"><i data-lucide="star"></i></div>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between">
+                        <div><p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Formateurs</p><p id="stat-trainers-count" class="text-3xl font-black text-orange-600">0</p></div>
+                        <div class="bg-orange-50 p-3 rounded-xl text-orange-600"><i data-lucide="calendar"></i></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Register -->
+            <div id="tab-register" class="tab-content animate-fade-in max-w-4xl mx-auto space-y-6">
+                <h2 class="text-2xl font-bold text-gray-800">Nouvelle Inscription</h2>
+                <form id="registration-form" class="bg-white p-8 rounded-2xl shadow-xl border border-gray-100 space-y-10">
+                    <!-- Info Perso -->
+                    <div class="space-y-6">
+                        <div class="flex items-center gap-2 pb-2 border-b">
+                            <i data-lucide="user" class="text-blue-600 w-5 h-5"></i>
+                            <h3 class="font-bold text-gray-700 uppercase text-sm">1. Informations Personnelles</h3>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <input type="text" id="reg-lastname" required placeholder="Nom" class="w-full border p-3 rounded-xl bg-gray-50/50 outline-none focus:ring-2 focus:ring-blue-500">
+                            <input type="text" id="reg-firstname" required placeholder="Prénom" class="w-full border p-3 rounded-xl bg-gray-50/50 outline-none focus:ring-2 focus:ring-blue-500">
+                            <input type="date" id="reg-birthdate" required class="w-full border p-3 rounded-xl bg-gray-50/50 outline-none focus:ring-2 focus:ring-blue-500">
+                            <select id="reg-gender" required class="w-full border p-3 rounded-xl bg-gray-50/50 outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="">Sexe</option>
+                                <option value="M">Masculin</option>
+                                <option value="F">Féminin</option>
+                            </select>
+                            <input type="tel" id="reg-phone" required placeholder="Téléphone" class="w-full border p-3 rounded-xl bg-gray-50/50 outline-none focus:ring-2 focus:ring-blue-500">
+                            <input type="email" id="reg-email" required placeholder="E-mail" class="w-full border p-3 rounded-xl bg-gray-50/50 outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                    </div>
+
+                    <!-- Cours -->
+                    <div class="space-y-6 pt-4 border-t">
+                        <h3 class="font-bold text-gray-700 uppercase text-sm">2. Choix des Formations</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="courses-container">
+                            <!-- JS will inject courses here -->
+                        </div>
+                    </div>
+
+                    <!-- Type -->
+                    <div class="space-y-6 pt-4 border-t">
+                        <h3 class="font-bold text-gray-700 uppercase text-sm">3. Formule & Créneaux</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div class="space-y-3">
+                                <label class="text-xs font-bold text-gray-400 uppercase">Type de cours</label>
+                                <select id="reg-coursetype" onchange="updateTotalDisplay()" class="w-full border p-3 rounded-xl bg-gray-50">
+                                    <option value="En groupe">En groupe (2$ / cours)</option>
+                                    <option value="Cours particulier">Cours particulier (20$ / cours)</option>
+                                </select>
+                            </div>
+                            <div class="space-y-3">
+                                <label class="text-xs font-bold text-gray-400 uppercase">Créneaux préférés</label>
+                                <div class="flex flex-wrap gap-2" id="slots-container">
+                                    <!-- JS will inject slots -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between p-6 bg-blue-50 rounded-2xl border border-blue-100">
+                        <div class="text-xs font-bold text-blue-700">TOTAL À PAYER</div>
+                        <div id="total-display" class="text-3xl font-black text-blue-700">0 $</div>
+                    </div>
+
+                    <button type="submit" class="w-full bg-blue-700 text-white font-black py-5 rounded-2xl shadow-xl hover:bg-blue-800 transition-all active:scale-95 uppercase tracking-widest">
+                        Confirmer l'inscription
+                    </button>
+                </form>
+            </div>
+
+            <!-- Tab: Participants List -->
+            <div id="tab-participants" class="tab-content animate-fade-in space-y-6">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-2xl font-bold text-gray-800">Registre des Apprenants</h2>
+                    <input type="text" id="search-input" oninput="renderParticipantsTable()" placeholder="Chercher..." class="border px-4 py-2 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
+                    <table class="w-full text-left">
+                        <thead class="bg-gray-50 text-[10px] font-black uppercase tracking-widest text-gray-400 border-b">
+                            <tr>
+                                <th class="p-5">Apprenant</th>
+                                <th class="p-5">Formule</th>
+                                <th class="p-5">Cours</th>
+                                <th class="p-5">Total</th>
+                                <th class="p-5 text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="participants-table-body" class="divide-y divide-gray-50">
+                            <!-- JS injected rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tab: Trainers -->
+            <div id="tab-trainers" class="tab-content animate-fade-in space-y-6">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-2xl font-bold text-gray-800">Gestion des Formateurs</h2>
+                    <button onclick="toggleTrainerModal(true)" class="bg-blue-600 text-white px-4 py-2 rounded-lg font-bold text-sm shadow-md hover:bg-blue-700">+ Nouveau</button>
+                </div>
+                <div id="trainers-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- JS injected cards -->
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Modals & Overlays -->
+    <div id="print-area" class="hidden bg-white p-10">
+        <!-- Injected during print -->
+    </div>
+
+    <!-- Trainer Modal -->
+    <div id="trainer-modal" class="fixed inset-0 bg-black/60 flex items-center justify-center hidden no-print p-4">
+        <div class="bg-white rounded-3xl p-8 max-w-md w-full animate-fade-in">
+            <h3 class="text-xl font-black uppercase mb-6 text-blue-800">Ajouter un Formateur</h3>
+            <form id="trainer-form" class="space-y-4">
+                <input type="text" id="t-name" required placeholder="Nom complet" class="w-full border p-3 rounded-xl outline-none">
+                <input type="text" id="t-domain" required placeholder="Expertise (ex: Anglais)" class="w-full border p-3 rounded-xl outline-none">
+                <input type="text" id="t-availability" required placeholder="Disponibilités (ex: Lun, Mar)" class="w-full border p-3 rounded-xl outline-none">
+                <div class="flex gap-3 pt-4">
+                    <button type="button" onclick="toggleTrainerModal(false)" class="flex-1 py-3 border rounded-xl font-bold text-xs uppercase">Annuler</button>
+                    <button type="submit" class="flex-1 py-3 bg-blue-600 text-white rounded-xl font-bold text-xs uppercase shadow-lg">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // --- DATA & CONFIG ---
+        const PRICE_GROUP = 2;
+        const PRICE_PRIVATE = 20;
+
+        const courseCatalog = [
+            "Français (FLE)", "Anglais Business", "Espagnol", "Alphabétisation",
+            "Coiffure", "Esthétique / Onglerie"
+        ];
+        const slots = ["Matin", "Après-midi", "Soir", "Week-end"];
+
+        let participants = JSON.parse(localStorage.getItem('training_participants')) || [];
+        let trainers = JSON.parse(localStorage.getItem('training_trainers')) || [
+            { id: 1, name: 'Jean Dupont', domain: 'Anglais Business', availability: 'Lundi, Mardi', status: 'Actif' },
+            { id: 2, name: 'Marie Curie', domain: 'Français FLE', availability: 'Mercredi', status: 'Actif' }
+        ];
+
+        // --- INITIALIZATION ---
+        window.onload = () => {
+            lucide.createIcons();
+            initForms();
+            updateStats();
+            renderParticipantsTable();
+            renderTrainers();
+        };
+
+        function initForms() {
+            // Courses
+            const container = document.getElementById('courses-container');
+            courseCatalog.forEach(course => {
+                const label = document.createElement('label');
+                label.className = "flex items-center gap-3 p-3 rounded-xl border border-gray-100 hover:bg-gray-50 cursor-pointer";
+                label.innerHTML = `
+                    <input type="checkbox" name="course" value="${course}" onchange="updateTotalDisplay()" class="w-4 h-4 text-blue-600">
+                    <span class="text-xs font-medium">${course}</span>
+                `;
+                container.appendChild(label);
+            });
+
+            // Slots
+            const slotContainer = document.getElementById('slots-container');
+            slots.forEach(slot => {
+                const label = document.createElement('label');
+                label.className = "flex items-center gap-2 p-2 px-3 rounded-lg border text-[10px] font-bold cursor-pointer";
+                label.innerHTML = `
+                    <input type="checkbox" name="slot" value="${slot}" class="hidden">
+                    <span>${slot}</span>
+                `;
+                label.querySelector('input').onchange = (e) => {
+                    label.classList.toggle('bg-blue-600', e.target.checked);
+                    label.classList.toggle('text-white', e.target.checked);
+                    label.classList.toggle('border-blue-600', e.target.checked);
+                };
+                slotContainer.appendChild(label);
+            });
+        }
+
+        // --- LOGIC ---
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('bg-blue-600', 'text-white', 'shadow-md');
+                btn.classList.add('text-gray-600', 'hover:bg-blue-50');
+            });
+            const activeBtn = document.getElementById(`btn-${tabId}`);
+            activeBtn.classList.add('bg-blue-600', 'text-white', 'shadow-md');
+            activeBtn.classList.remove('text-gray-600', 'hover:bg-blue-50');
+        }
+
+        function calculateTotal() {
+            const selectedCourses = document.querySelectorAll('input[name="course"]:checked').length;
+            const type = document.getElementById('reg-coursetype').value;
+            const price = type === 'Cours particulier' ? PRICE_PRIVATE : PRICE_GROUP;
+            return selectedCourses * price;
+        }
+
+        function updateTotalDisplay() {
+            document.getElementById('total-display').innerText = `${calculateTotal()} $`;
+        }
+
+        // --- SUBMIT ---
+        document.getElementById('registration-form').onsubmit = (e) => {
+            e.preventDefault();
+            const selectedCourses = Array.from(document.querySelectorAll('input[name="course"]:checked')).map(i => i.value);
+            const selectedSlots = Array.from(document.querySelectorAll('input[name="slot"]:checked')).map(i => i.value);
+            
+            if(selectedCourses.length === 0) {
+                alert("Veuillez choisir au moins un cours");
+                return;
+            }
+
+            const newP = {
+                id: Date.now(),
+                lastName: document.getElementById('reg-lastname').value,
+                firstName: document.getElementById('reg-firstname').value,
+                birthDate: document.getElementById('reg-birthdate').value,
+                gender: document.getElementById('reg-gender').value,
+                phone: document.getElementById('reg-phone').value,
+                email: document.getElementById('reg-email').value,
+                courses: selectedCourses,
+                courseType: document.getElementById('reg-coursetype').value,
+                slots: selectedSlots,
+                total: calculateTotal(),
+                date: new Date().toLocaleDateString()
+            };
+
+            participants.push(newP);
+            localStorage.setItem('training_participants', JSON.stringify(participants));
+            
+            e.target.reset();
+            updateTotalDisplay();
+            updateStats();
+            renderParticipantsTable();
+            switchTab('participants');
+        };
+
+        // --- UI RENDERING ---
+        function updateStats() {
+            document.getElementById('stat-total-participants').innerText = participants.length;
+            document.getElementById('stat-trainers-count').innerText = trainers.length;
+            document.getElementById('stat-total-revenue').innerText = participants.reduce((acc, p) => acc + p.total, 0) + '$';
+            document.getElementById('stat-private-count').innerText = participants.filter(p => p.courseType === 'Cours particulier').length;
+        }
+
+        function renderParticipantsTable() {
+            const body = document.getElementById('participants-table-body');
+            const search = document.getElementById('search-input').value.toLowerCase();
+            body.innerHTML = '';
+
+            participants
+                .filter(p => `${p.firstName} ${p.lastName}`.toLowerCase().includes(search))
+                .forEach(p => {
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-blue-50/30 transition-colors";
+                    tr.innerHTML = `
+                        <td class="p-5">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded bg-blue-100 flex items-center justify-center text-blue-700 font-bold text-xs">${p.firstName[0]}</div>
+                                <div>
+                                    <div class="font-bold text-sm uppercase">${p.lastName} ${p.firstName}</div>
+                                    <div class="text-[9px] text-gray-400">${p.date}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="p-5">
+                            <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded ${p.courseType === 'En groupe' ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700'}">${p.courseType}</span>
+                        </td>
+                        <td class="p-5">
+                            <div class="flex flex-wrap gap-1">
+                                ${p.courses.map(c => `<span class="px-2 py-0.5 bg-gray-100 text-[8px] font-bold rounded">${c}</span>`).join('')}
+                            </div>
+                        </td>
+                        <td class="p-5 text-sm font-black text-green-600">${p.total}$</td>
+                        <td class="p-5 flex justify-center gap-2">
+                            <button onclick="printParticipant(${p.id})" class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"><i data-lucide="printer" class="w-4 h-4"></i></button>
+                            <button onclick="deleteParticipant(${p.id})" class="p-2 text-red-500 hover:bg-red-50 rounded-lg"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        </td>
+                    `;
+                    body.appendChild(tr);
+                });
+            lucide.createIcons();
+        }
+
+        function renderTrainers() {
+            const grid = document.getElementById('trainers-grid');
+            grid.innerHTML = '';
+            trainers.forEach(t => {
+                const card = document.createElement('div');
+                card.className = "bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-6";
+                card.innerHTML = `
+                    <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white font-black">${t.name[0]}</div>
+                    <div class="flex-1">
+                        <h4 class="font-bold text-sm">${t.name}</h4>
+                        <p class="text-[10px] text-blue-600 font-bold uppercase">${t.domain}</p>
+                        <p class="text-[9px] text-gray-400">Dispo: ${t.availability}</p>
+                    </div>
+                    <button onclick="deleteTrainer(${t.id})" class="text-gray-300 hover:text-red-500"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                `;
+                grid.appendChild(card);
+            });
+            lucide.createIcons();
+        }
+
+        // --- ACTIONS ---
+        function deleteParticipant(id) {
+            participants = participants.filter(p => p.id !== id);
+            localStorage.setItem('training_participants', JSON.stringify(participants));
+            updateStats();
+            renderParticipantsTable();
+        }
+
+        function toggleTrainerModal(show) {
+            document.getElementById('trainer-modal').classList.toggle('hidden', !show);
+        }
+
+        document.getElementById('trainer-form').onsubmit = (e) => {
+            e.preventDefault();
+            const t = {
+                id: Date.now(),
+                name: document.getElementById('t-name').value,
+                domain: document.getElementById('t-domain').value,
+                availability: document.getElementById('t-availability').value
+            };
+            trainers.push(t);
+            localStorage.setItem('training_trainers', JSON.stringify(trainers));
+            renderTrainers();
+            updateStats();
+            toggleTrainerModal(false);
+            e.target.reset();
+        };
+
+        function deleteTrainer(id) {
+            trainers = trainers.filter(t => t.id !== id);
+            localStorage.setItem('training_trainers', JSON.stringify(trainers));
+            renderTrainers();
+            updateStats();
+        }
+
+        function printParticipant(id) {
+            const p = participants.find(item => item.id === id);
+            const printArea = document.getElementById('print-area');
+            printArea.innerHTML = `
+                <div class="border-b-4 border-blue-700 pb-6 mb-10 flex justify-between items-start">
+                    <div>
+                        <h1 class="text-4xl font-black text-blue-900 uppercase">EduManager Pro</h1>
+                        <p class="text-sm font-bold tracking-widest text-gray-400">FACTURE D'INSCRIPTION #${p.id}</p>
+                    </div>
+                    <div class="text-right text-xs">
+                        <p class="font-bold">Date: ${p.date}</p>
+                        <p>Centre de Formation Continue</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-10">
+                    <div class="space-y-4">
+                        <h3 class="text-xs font-black uppercase text-blue-600 border-b pb-1">Apprenant</h3>
+                        <p class="text-xl font-bold uppercase">${p.lastName} ${p.firstName}</p>
+                        <p class="text-sm">Tél: ${p.phone}</p>
+                        <p class="text-sm">Email: ${p.email}</p>
+                    </div>
+                    <div class="space-y-4">
+                        <h3 class="text-xs font-black uppercase text-blue-600 border-b pb-1">Détails Formation</h3>
+                        <div class="space-y-1">
+                            ${p.courses.map(c => `<p class="text-sm font-bold">• ${c}</p>`).join('')}
+                        </div>
+                        <p class="text-xs text-gray-500 uppercase mt-4">Formule: ${p.courseType}</p>
+                    </div>
+                </div>
+                <div class="mt-16 p-8 bg-gray-50 rounded-3xl border text-center">
+                    <p class="text-xs font-bold text-gray-400 uppercase">Total Encaissé</p>
+                    <p class="text-5xl font-black text-blue-800">${p.total} $</p>
+                </div>
+                <div class="mt-20 grid grid-cols-2 gap-20 text-center text-[10px] font-black uppercase text-gray-300">
+                    <div class="border-t pt-4">Signature Apprenant</div>
+                    <div class="border-t pt-4">Le Secrétariat</div>
+                </div>
+            `;
+            window.print();
+        }
+    </script>
+</body>
+</html>
